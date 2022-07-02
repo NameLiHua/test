@@ -1,0 +1,97 @@
+<div>
+    <a href="#">
+        <div id="container" style="height:100%"></div>
+    </a>
+</div>
+
+<!--//为组件加载依赖-->
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+<link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+<script type="text/javascript" src='https://webapi.amap.com/maps?v=1.4.12&key=6826e7b5cd9e2b342d4bbaa0d5bf06ec'></script>
+<!-- UI组件库 1.0 -->
+<script src="https://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+    var x=116.391467,y=39.927761;
+    //新建地图
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center:[114.756933,25.661721]
+    });
+    var marker = new AMap.Marker({
+        map: map,
+        //获取中心点的位置
+        position:[114.756933,25.661721],
+        //map.getCenter()
+        icon: "https://webapi.amap.com/images/car.png",
+    });
+    //加载界面
+    AMapUI.loadUI(['overlay/SimpleInfoWindow'], function(SimpleInfoWindow) {
+        // var adds =$('#adds').text();
+        var infoWindow = new SimpleInfoWindow({
+            //模板, underscore
+            infoTitle: '<strong><%- title %></strong>',
+            infoBody: '<p class="my-desc">' +
+                //<%= 原值插入 ..
+                '<%= img %>' +
+                //<%- html编码后插入
+                '<%- body %>' +
+                '</p>',
+            //模板数据
+            infoTplData: {
+                title: '你爸当前位置',
+                img: '<img src="https://webapi.amap.com/theme/v1.3/autonavi.png" /><br/>',
+                body: '狗蛋',
+            },
+
+            //基点指向marker的头部位置
+            offset: new AMap.Pixel(0, -31)
+        });
+
+        function openInfoWin() {
+            infoWindow.open(map, marker.getPosition());
+        }
+
+        //marker 点击时打开
+        AMap.event.addListener(marker, 'click', function() {
+            openInfoWin();
+        });
+        openInfoWin();
+    });
+
+    //循环响应体
+    setInterval(function () {
+        // Call a function repetatively with 2 Second interval
+        // x=getMapX();
+        // y=getMapY();
+
+    }, 2000); //2000mSeconds update rate
+
+    function getMapX() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("x").innerHTML =
+                    this.responseText;
+                x=this.responseText
+            }
+        };
+        xhttp.open("GET", "readMapLongitude", true);
+        xhttp.send();
+        return x;
+    }
+
+    function getMapY() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("y").innerHTML =
+                    this.responseText;
+                y=this.responseText
+            }
+        };
+        xhttp.open("GET", "readMapLatitud", true);
+        xhttp.send();
+        return y;
+    }
+</script>
